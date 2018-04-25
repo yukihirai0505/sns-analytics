@@ -24,11 +24,10 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path="/login" name="Login Page" component={Login} />
-          <Route exact path="/register" name="Register Page" component={Register} />
-          <Route exact path="/404" name="Page 404" component={Page404} />
-          <Route exact path="/500" name="Page 500" component={Page500} />
-          <Route path="/" name="Home" component={Full} />
+          <Route exact path="/login" name="ログイン" component={Register} />
+          <Route exact path="/404" name="404ページ" component={Page404} />
+          <Route exact path="/500" name="500ページ" component={Page500} />
+          <Route path="/" name="ホーム" component={Full} />
         </Switch>
       </BrowserRouter>
     );
