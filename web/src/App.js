@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
 // Styles
 // Import Flag Icons Set
@@ -22,7 +22,7 @@ import { Login, Page404, Page500, Register } from './views/Pages';
 class App extends Component {
   render() {
     return (
-      <Router>
+      <BrowserRouter>
         <Switch>
           <Route exact path="/login" name="Login Page" component={Login} />
           <Route exact path="/register" name="Register Page" component={Register} />
@@ -30,7 +30,7 @@ class App extends Component {
           <Route exact path="/500" name="Page 500" component={Page500} />
           <Route path="/" name="Home" component={Full} />
         </Switch>
-      </Router>
+      </BrowserRouter>
     );
   }
 }
