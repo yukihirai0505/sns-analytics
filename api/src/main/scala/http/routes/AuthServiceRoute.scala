@@ -82,21 +82,11 @@ class AuthServiceRoute(val authService: AuthService)
                 onComplete(token) {
                   case scala.util.Success(value) =>
                     setUserIdSession(UserId(value)) {
-                      //
                       complete(StatusCodes.OK)
                     }
                   case Failure(ex) => complete((InternalServerError, s"An error occurred: ${ex.getMessage}"))
                 }
               }
-            }
-          }
-        }
-      } ~
-      path("required_login") {
-        pathEndOrSingleSlash {
-          get {
-            requiredUserIdSession { session =>
-              complete(session.userId)
             }
           }
         }
