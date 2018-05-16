@@ -1,31 +1,32 @@
 package http.routes
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{HttpRequest, StatusCodes, Uri}
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
-import de.heikoseeberger.akkahttpcirce.CirceSupport
-import http.SecurityDirectives
-import io.circe.generic.auto._
-import models.UserEntity
-import org.apache.commons.codec.binary.Base64._
-import services.AuthService
-import twitter4j.TwitterFactory
-import twitter4j.auth.{AccessToken, RequestToken}
-import twitter4j.conf.{Configuration, ConfigurationBuilder}
-import utils.Config
 import com.softwaremill.session.SessionDirectives._
 import com.softwaremill.session.SessionOptions._
-import com.softwaremill.session.SessionResult._
 import com.softwaremill.session._
-import scala.util.Try
-
+import de.heikoseeberger.akkahttpcirce.CirceSupport
+import http.SecurityDirectives
+import services.AuthService
+import sessions.{TwitterRequestToken, UserId}
+import twitter4j.TwitterFactory
+import twitter4j.auth.AccessToken
+import utils.Config
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Failure
 
+/**
+  * ref: http://takezoe.hatenablog.com/entry/2018/01/30/141750
+  * ref: https://github.com/softwaremill/akka-http-session/blob/master/example/src/main/scala/com/softwaremill/example/ScalaExample.scala
+  *
+  * @param authService
+  * @param executionContext
+  * @param actorSystem
+  * @param materializer
+  */
 class AuthServiceRoute(val authService: AuthService)
                       (implicit executionContext: ExecutionContext,
                        actorSystem: ActorSystem,
@@ -37,19 +38,17 @@ class AuthServiceRoute(val authService: AuthService)
   import StatusCodes._
   import authService._
 
-  case class MyScalaSession(username: String)
-
-  object MyScalaSession {
-    implicit def serializer: SessionSerializer[MyScalaSession, String] =
-      new SingleValueSessionSerializer(_.username,
-        (un: String) =>
-          Try {
-            MyScalaSession(un)
-          })
-  }
-
   val sessionConfig = SessionConfig.default(SessionUtil.randomServerSecret())
-  implicit val sessionManager = new SessionManager[MyScalaSession](sessionConfig)
+  val userIdSessionManager = new SessionManager[UserId](sessionConfig)
+  val twitterRequestTokenSessionManager = new SessionManager[TwitterRequestToken](sessionConfig)
+
+  def setTwitterRequestTokenSession(v: TwitterRequestToken) = setSession(oneOff(twitterRequestTokenSessionManager), usingCookies, v)
+
+  def requiredTwitterRequestTokenSession = requiredSession(oneOff(twitterRequestTokenSessionManager), usingCookies)
+
+  def setUserIdSession(v: UserId) = setSession(oneOff(userIdSessionManager), usingCookies, v)
+
+  def requiredUserIdSession = requiredSession(oneOff(userIdSessionManager), usingCookies)
 
   val route = pathPrefix("auth") {
     path("signIn") {
@@ -57,7 +56,7 @@ class AuthServiceRoute(val authService: AuthService)
         get {
           val twitter = new TwitterFactory(twitterConf).getInstance()
           val requestToken = twitter.getOAuthRequestToken(callbackUrl)
-          setSession(oneOff, usingCookies, MyScalaSession("id")) {
+          setTwitterRequestTokenSession(TwitterRequestToken(requestToken.getTokenSecret)) {
             redirect(requestToken.getAuthenticationURL, SeeOther)
           }
         }
@@ -66,10 +65,10 @@ class AuthServiceRoute(val authService: AuthService)
       path("callback") {
         pathEndOrSingleSlash {
           get {
-            parameters('oauth_token.as[String], 'oauth_verifier.as[String]) { (oauthToken, oauthVerifier) =>
-              val twitter = new TwitterFactory(twitterConf).getInstance()
-              requiredSession(oneOff, usingCookies) { session =>
-                val accessToken: AccessToken = twitter.getOAuthAccessToken("", oauthVerifier)
+            requiredTwitterRequestTokenSession { session =>
+              parameters('oauth_token.as[String], 'oauth_verifier.as[String]) { (oauthToken, oauthVerifier) =>
+                val twitter = new TwitterFactory(twitterConf).getInstance()
+                val accessToken: AccessToken = twitter.getOAuthAccessToken(oauthVerifier)
                 twitter.verifyCredentials()
                 val token: Future[String] = signIn(twitter.getId).flatMap {
                   case Some(t) => Future successful t.token
@@ -78,10 +77,23 @@ class AuthServiceRoute(val authService: AuthService)
                     signUp(user, accessToken.getToken).flatMap(t => Future successful t.token)
                 }
                 onComplete(token) {
-                  case scala.util.Success(value) => redirect(s"$userCallbackUrl?token=$value", Found)
+                  case scala.util.Success(value) =>
+                    setUserIdSession(UserId(value)) {
+                      //
+                      complete(StatusCodes.OK)
+                    }
                   case Failure(ex) => complete((InternalServerError, s"An error occurred: ${ex.getMessage}"))
                 }
               }
+            }
+          }
+        }
+      } ~
+      path("required_login") {
+        pathEndOrSingleSlash {
+          get {
+            requiredUserIdSession { session =>
+              complete(session.userId)
             }
           }
         }
