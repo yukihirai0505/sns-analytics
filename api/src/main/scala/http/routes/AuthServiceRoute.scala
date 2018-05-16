@@ -12,7 +12,7 @@ import http.SecurityDirectives
 import services.AuthService
 import sessions.{TwitterRequestToken, UserId}
 import twitter4j.TwitterFactory
-import twitter4j.auth.AccessToken
+import twitter4j.auth.{AccessToken, RequestToken}
 import utils.Config
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,7 +56,7 @@ class AuthServiceRoute(val authService: AuthService)
         get {
           val twitter = new TwitterFactory(twitterConf).getInstance()
           val requestToken = twitter.getOAuthRequestToken(callbackUrl)
-          setTwitterRequestTokenSession(TwitterRequestToken(requestToken.getTokenSecret)) {
+          setTwitterRequestTokenSession(TwitterRequestToken(requestToken.getToken, requestToken.getTokenSecret)) {
             redirect(requestToken.getAuthenticationURL, SeeOther)
           }
         }
@@ -68,7 +68,10 @@ class AuthServiceRoute(val authService: AuthService)
             requiredTwitterRequestTokenSession { session =>
               parameters('oauth_token.as[String], 'oauth_verifier.as[String]) { (oauthToken, oauthVerifier) =>
                 val twitter = new TwitterFactory(twitterConf).getInstance()
-                val accessToken: AccessToken = twitter.getOAuthAccessToken(oauthVerifier)
+                val accessToken: AccessToken = twitter.getOAuthAccessToken(
+                  new RequestToken(session.token, session.tokenSecret),
+                  oauthVerifier
+                )
                 twitter.verifyCredentials()
                 val token: Future[String] = signIn(twitter.getId).flatMap {
                   case Some(t) => Future successful t.token
