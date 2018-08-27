@@ -2,10 +2,39 @@
   "name": "sns-analytics",
   "version": "1.0.0",
   "description": "App for Beneficial Tweet",
-  "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "firebase-admin": "^5.12.1",
+    "firebase-functions": "^1.0.4",
+    "next": "^6.0.3",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0"
+  },
   "devDependencies": {
-    "firebase-tools": "^4.2.0",
-    "prettier": "^1.14.2"
+    "@babel/cli": "^7.0.0-beta.42",
+    "@babel/core": "^7.0.0-beta.42",
+    "@babel/preset-env": "^7.0.0-beta.42",
+    "@firebase/app-types": "^0.3.2",
+    "cpx": "^1.5.0",
+    "firebase-tools": "^3.18.6",
+    "prettier": "^1.13.5",
+    "rimraf": "^2.6.2"
+  },
+  "scripts": {
+    "fblogin": "yarn firebase login",
+    "dev": "next \"src/app\"",
+    "preserve": "yarn build-public && yarn build-funcs && yarn build-app && yarn copy-deps && yarn install-deps",
+    "serve": "NODE_ENV=production yarn firebase serve --only functions,hosting",
+    "deploy-app": "yarn firebase deploy --only hosting,functions:app",
+    "deploy-functions": "yarn firebase deploy --only functions:greetings",
+    "deploy-all": "yarn firebase deploy",
+    "clean": "rimraf \"dist/functions\" && rimraf \"dist/public\"",
+    "build-public": "cpx \"src/public/**/*.*\" \"dist/public\" -C",
+    "build-funcs": "babel \"src/functions\" --out-dir \"dist/functions\"",
+    "build-app": "NODE_ENV=production next build \"src/app\"",
+    "copy-deps": "cpx \"*{package.json,yarn.lock}\" \"dist/functions\"",
+    "install-deps": "cd \"dist/functions\" && yarn"
+  },
+  "prettier": {
+    "trailingComma": "es5"
   }
 }

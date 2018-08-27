@@ -1,3 +1,11 @@
+## Installation
+
+`$ yarn install`
+
+## Dev
+
+`$ yarn dev`
+
 ## Firebase
 
 ```
