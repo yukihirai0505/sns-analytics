@@ -9,6 +9,8 @@ const nextApp = functions.https.onRequest((request, response) => {
   console.log("File: " + request.originalUrl)
   console.log("dev:", dev)
   // log the page.js file or resource being requested
+  const queryParams = { id: request.params.id }
+  console.log("queryParams:", queryParams)
 
   return app.prepare().then(() => handle(request, response))
 })
