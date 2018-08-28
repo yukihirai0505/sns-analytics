@@ -31,10 +31,13 @@ class Index extends Component {
     }
   }
 
-  async componentDidMount() {
+  async componentWillMount() {
     auth.onAuthStateChanged(user => {
       this.setState({ user })
     })
+  }
+
+  async componentDidMount() {
     const result = await auth.getRedirectResult().catch(error => {
       console.log('redirect result', error)
     })
@@ -63,7 +66,6 @@ class Index extends Component {
 
   render() {
     const { user } = this.state
-    console.log(user)
     return (
       <App>
         <h1>{user ? `Login: ${user.displayName}` : 'Not Login'}</h1>
