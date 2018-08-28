@@ -39,6 +39,8 @@ const Index = props => (
 )
 
 Index.getInitialProps = async function() {
+  // NOTICE: It is not possible to call non-google APIs using the free Spark plan as explained on the Firebase pricing page:
+  // ref: https://stackoverflow.com/questions/43415759/use-firebase-cloud-function-to-send-post-request-to-non-google-server
   // const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
   // const data = await res.json()
   // console.log(`Show data fetched. Count: ${data.length}`)
