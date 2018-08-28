@@ -1,5 +1,5 @@
-printWidth: 120
+jsxBracketSameLine: false
 tabWidth: 2
-singleQuote: true
-trailingComma:
+trailingComma: "none"
 semi: false
+singleQuote: true

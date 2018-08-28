@@ -11,8 +11,12 @@ const nextApp = functions.https.onRequest((request, response) => {
   // log the page.js file or resource being requested
   const queryParams = { id: request.params.id }
   console.log("queryParams:", queryParams)
-
-  return app.prepare().then(() => handle(request, response))
+  if (queryParams.id) {
+    const actualPath = `/post`
+    return app.prepare().then(() => handle(request, response, actualPath, queryParams))
+  } else {
+    return app.prepare().then(() => handle(request, response))
+  }
 })
 
 export { nextApp }
