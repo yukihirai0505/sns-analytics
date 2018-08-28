@@ -88,14 +88,14 @@ class Yabami {
 					'http://localhost:5000',
 					site_url()
 				) : array(
-					site_url()
+					site_url(),
+					'https://snsanalytics-ef74a.firebaseapp.com'
 				);
 				if ( $origin && in_array( $origin, $arrow_origins ) ) {
 					header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
 					header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
 					header( 'Access-Control-Allow-Credentials: true' );
 				}
-
 				return $value;
 			} );
 

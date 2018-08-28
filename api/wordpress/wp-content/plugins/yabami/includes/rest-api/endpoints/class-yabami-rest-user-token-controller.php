@@ -41,8 +41,7 @@ class Yabami_Rest_User_Token_Controller extends Yabami_Rest_Controller {
 		$uid                  = $params['uid'];
 		$twitter_access_token = $params['twitterAccessToken'];
 		$user_token           = new Yabami_Model_User_Token();
-		$user_token->save( $uid, $twitter_access_token );
 
-		return self::ok();
+		return self::ok( $user_token->save( $uid, $twitter_access_token ) );
 	}
 }

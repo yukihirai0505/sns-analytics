@@ -14,11 +14,11 @@ abstract class Yabami_Rest_Controller {
 	protected $namespace = 'yabami/v1';
 	protected $rest_base;
 
-	static function ok() {
+	static function ok($data = 'ok') {
 		$response = new WP_REST_Response();
 		$response->set_status( 200 );
 		$response->set_data( array(
-			'data' => 'ok'
+			'data' => $data
 		) );
 		return $response;
 	}

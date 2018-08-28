@@ -2,17 +2,12 @@ import React, { Component } from 'react'
 import App from '../components/App'
 import Link from 'next/link'
 import { auth, providerTwitter } from '../config'
-import fetch from 'isomorphic-unfetch'
+import axios from 'axios'
 
 class Index extends Component {
   static async getInitialProps({}) {
     // NOTICE: It is not possible to call non-google APIs using the free Spark plan as explained on the Firebase pricing page:
     // ref: https://stackoverflow.com/questions/43415759/use-firebase-cloud-function-to-send-post-request-to-non-google-server
-    // const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
-    // const data = await res.json()
-    // console.log(`Show data fetched. Count: ${data.length}`)
-    // return {
-    //   shows: data
     const show = {
       show: {
         id: 1,
@@ -31,21 +26,28 @@ class Index extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     auth.onAuthStateChanged(user => {
       this.setState({ user })
     })
-  }
 
-  async componentDidMount() {
     const result = await auth.getRedirectResult().catch(error => {
       console.log('redirect result', error)
     })
+
     console.log('redirect result', result)
     const user = result.user
     if (user) {
-      // TODO: save user data to DB
-      this.state({ user })
+      this.setState({ user })
+      const res = await axios
+        .post('https://yabaiwebyasan.com/wp-json/yabami/v1/user_token', {
+          uid: user.uid,
+          twitterAccessToken: result.credential.accessToken
+        })
+        .catch(function(error) {
+          console.log(error)
+        })
+      console.log(res)
     }
   }
 

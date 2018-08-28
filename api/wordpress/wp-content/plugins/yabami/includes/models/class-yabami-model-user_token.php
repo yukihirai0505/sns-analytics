@@ -20,14 +20,19 @@ class Yabami_Model_User_Token extends Yabami_Model {
 		);
 	}
 
+	function get_by_uid($uid) {
+		global $wpdb;
+		return $wpdb->get_row("SELECT * FROM user_token WHERE uid = \"${uid}\"");
+	}
+
 	function save( $uid, $twitter_access_token ) {
 		global $wpdb;
-
-
-		return $wpdb->insert( 'user_token', array(
-			'name'      => $uid,
-			'free_text' => $twitter_access_token
-		) );
-
+		if (!$this->get_by_uid($uid)) {
+			return $wpdb->insert( 'user_token', array(
+				'uid'      => $uid,
+				'twitter_access_token' => $twitter_access_token
+			) );
+		}
+		return false;
 	}
 }

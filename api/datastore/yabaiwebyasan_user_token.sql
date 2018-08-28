@@ -23,8 +23,8 @@ DROP TABLE IF EXISTS `user_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_token` (
-  `uid` varchar(20) NOT NULL COMMENT 'Unique ID',
-  `twitter_access_token` bigint(20) NOT NULL COMMENT 'Twitter AccessToken',
+  `uid` varchar(100) NOT NULL COMMENT 'Unique ID',
+  `twitter_access_token` varchar(500) NOT NULL COMMENT 'Twitter AccessToken',
   PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB DEFAULT COMMENT='User Tokens';
 /*!40101 SET character_set_client = @saved_cs_client */;

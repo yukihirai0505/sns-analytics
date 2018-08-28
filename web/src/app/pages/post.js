@@ -1,5 +1,4 @@
 import App from '../components/App'
-import fetch from 'isomorphic-unfetch'
 
 const Post = props => (
   <App>
