@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import App from '../components/App'
 import Link from 'next/link'
+import { auth, providerTwitter } from '../config'
 import fetch from 'isomorphic-unfetch'
-import Content from '../components/Content'
-import { auth } from '../config'
 
 class Index extends Component {
   static async getInitialProps({}) {
@@ -20,7 +19,7 @@ class Index extends Component {
         name: 'hoge'
       }
     }
-    const shows = [show, show, show]
+    const shows = [show]
     return { shows }
   }
 
@@ -32,18 +31,33 @@ class Index extends Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     auth.onAuthStateChanged(user => {
       this.setState({ user })
     })
+    const result = await auth.getRedirectResult().catch(error => {
+      console.log('redirect result', error)
+    })
+    console.log('redirect result', result)
+    const user = result.user
+    if (user) {
+      // TODO: save user data to DB
+      this.state({ user })
+    }
+  }
+
+  handleLogin = () => {
+    auth.signInWithRedirect(providerTwitter)
+  }
+
+  handleSignOut = () => {
     auth
-      .getRedirectResult()
+      .signOut()
       .then(result => {
-        // TODO: save user data to DB
-        console.log('redirect result', result)
+        this.setState({ user: undefined })
       })
       .catch(error => {
-        console.log('redirect result', error)
+        console.log(error)
       })
   }
 
@@ -62,7 +76,11 @@ class Index extends Component {
             </li>
           ))}
         </ul>
-        <Content />
+        {user ? (
+          <button onClick={this.handleSignOut}>Sign Out</button>
+        ) : (
+          <button onClick={this.handleLogin}>Login with Twitter</button>
+        )}
       </App>
     )
   }
