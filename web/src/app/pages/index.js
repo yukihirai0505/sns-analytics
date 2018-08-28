@@ -39,11 +39,20 @@ const Index = props => (
 )
 
 Index.getInitialProps = async function() {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
-  const data = await res.json()
-  console.log(`Show data fetched. Count: ${data.length}`)
+  // const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
+  // const data = await res.json()
+  // console.log(`Show data fetched. Count: ${data.length}`)
+  // return {
+  //   shows: data
+  // }
+  const show = {
+    show: {
+      id: 1,
+      name: 'hoge'
+    }
+  }
   return {
-    shows: data
+    shows: [show, show, show]
   }
 }
 

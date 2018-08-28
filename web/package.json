@@ -18,6 +18,10 @@
     "install-deps": "cd \"dist/functions\" && yarn"
   },
   "dependencies": {
+    "@babel/cli": "^7.0.0-beta.42",
+    "@babel/core": "^7.0.0-beta.42",
+    "@babel/preset-env": "^7.0.0-beta.42",
+    "@babel/runtime": "^7.0.0",
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "firebase": "^5.4.1",
@@ -29,9 +33,6 @@
     "react-dom": "^16.4.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.42",
-    "@babel/core": "^7.0.0-beta.42",
-    "@babel/preset-env": "^7.0.0-beta.42",
     "@firebase/app-types": "^0.3.2",
     "cpx": "^1.5.0",
     "firebase-tools": "^3.18.6",
