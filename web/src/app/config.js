@@ -6,7 +6,7 @@ if (!firebase.apps.length) {
     apiKey: 'AIzaSyCQzyZ2dRUl_dQFeCLqRxrHJEMD9a5D0WI',
     authDomain: 'snsanalytics-ef74a.firebaseapp.com',
     projectId: 'snsanalytics-ef74a'
-  });
+  })
 }
 
 export const providerTwitter = new firebase.auth.TwitterAuthProvider()

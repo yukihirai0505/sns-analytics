@@ -1,6 +1,6 @@
-import { nextApp as next } from "./app/app"
-import { mars } from "./worlds/mars"
-import { jupiter } from "./worlds/jupiter"
+import { nextApp as next } from './app/app'
+import { mars } from './worlds/mars'
+import { jupiter } from './worlds/jupiter'
 
 /*
 Namespace application services with function groups.
@@ -10,7 +10,7 @@ Partially deploy namespaces for independent service updates.
 // SSR Next.js app Cloud Function used by Firebase Hosting
 // yarn deploy-app
 const app = {
-  next,
+  next
   // other Hosting dependencies
 }
 
@@ -18,7 +18,7 @@ const app = {
 // yarn deploy-functions
 const greetings = {
   mars,
-  jupiter,
+  jupiter
   // other funcs
 }
 
