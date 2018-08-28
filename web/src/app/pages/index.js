@@ -40,9 +40,11 @@ class Index extends Component {
     if (user) {
       this.setState({ user })
       const res = await axios
-        .post('https://yabaiwebyasan.com/wp-json/yabami/v1/user_token', {
+        //.post('https://yabaiwebyasan.com/wp-json/yabami/v1/user_token', {
+        .post('http://localhost:8888/wp-json/yabami/v1/user_token', {
           uid: user.uid,
-          twitterAccessToken: result.credential.accessToken
+          twitterAccessToken: result.credential.accessToken,
+          twitterAccessTokenSecret: result.credential.secret
         })
         .catch(function(error) {
           console.log(error)

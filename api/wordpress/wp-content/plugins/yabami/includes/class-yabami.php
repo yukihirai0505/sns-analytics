@@ -96,11 +96,14 @@ class Yabami {
 					header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE' );
 					header( 'Access-Control-Allow-Credentials: true' );
 				}
+
 				return $value;
 			} );
 
 			$user_token = new Yabami_Rest_User_Token_Controller();
 			$user_token->register_endpoints();
+			$twitter = new Yabami_Rest_Twitter_Controller();
+			$twitter->register_endpoints();
 		} );
 	}
 
@@ -122,12 +125,16 @@ class Yabami {
 	 */
 	private function load_dependencies() {
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/lib/vendor/autoload.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/utils/class-yabami-util-twitter.php';
+
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model-user_token.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/class-yabami-rest-controller.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/endpoints/class-yabami-rest-user-token-controller.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/endpoints/class-yabami-rest-twitter-controller.php';
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the

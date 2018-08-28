@@ -28,6 +28,8 @@ services:
       MYSQL_PORT: "3306"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
+      TWITTER_CONSUMER_KEY: "${TWITTER_CONSUMER_KEY}"
+      TWITTER_CONSUMER_SECRET: "${TWITTER_CONSUMER_SECRET}"
     links:
       - db
       - redis

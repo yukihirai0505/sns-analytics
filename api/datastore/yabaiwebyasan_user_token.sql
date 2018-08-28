@@ -25,8 +25,10 @@ DROP TABLE IF EXISTS `user_token`;
 CREATE TABLE `user_token` (
   `uid` varchar(100) NOT NULL COMMENT 'Unique ID',
   `twitter_access_token` varchar(500) NOT NULL COMMENT 'Twitter AccessToken',
-  PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT COMMENT='User Tokens';
+  `twitter_access_token_secret` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`uid`),
+  UNIQUE KEY `uid_UNIQUE` (`uid`)
+) ENGINE=InnoDB COMMENT='User Tokens';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
