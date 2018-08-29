@@ -17,6 +17,13 @@ class Yabami_Rest_Twitter_Controller extends Yabami_Rest_Controller {
 
 	public function register_endpoints() {
 
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/embed', array(
+			array(
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'embed' )
+			)
+		) );
+
 		register_rest_route( $this->namespace, '/' . $this->rest_base . '/search_user', array(
 			array(
 				'methods'  => WP_REST_Server::CREATABLE,
@@ -37,6 +44,13 @@ class Yabami_Rest_Twitter_Controller extends Yabami_Rest_Controller {
 				'callback' => array( $this, 'beneficial_tweets' )
 			)
 		) );
+	}
+
+	public function embed(WP_REST_Request $data) {
+		$params     = $data->get_params();
+		$url      = urldecode( $params['url'] );
+		$res = json_decode(wp_remote_get('https://publish.twitter.com/oembed?url=' . $url)['body']);
+		return self::ok($res->html);
 	}
 
 	public function search_user( WP_REST_Request $data ) {

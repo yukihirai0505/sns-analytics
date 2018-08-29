@@ -98,8 +98,19 @@ class Index extends Component {
       .catch(function(error) {
         console.log(error)
       })
-    console.log(tweetRes.data.data)
-    this.setState({ tweets: tweetRes.data.data })
+    let newTweets = []
+    tweetRes.data.data.forEach(async twitter => {
+      const url = `https://twitter.com/${twitter.user.screen_name}/statuses/${
+        twitter.id_str
+      }`
+      const res = await axios
+        .get(`${configs.api}/twitter/embed?url=${url}`)
+        .catch(function(error) {
+          console.log(error)
+        })
+      newTweets.push(res.data.data)
+      this.setState({ tweets: newTweets })
+    })
   }
 
   render() {
@@ -124,11 +135,9 @@ class Index extends Component {
             <li key={index}>{category.name}</li>
           ))}
         </ul>
-        <ul>
-          {tweets.map((twitter, index) => (
-            <li key={index}>{twitter.text}</li>
-          ))}
-        </ul>
+        {tweets.map((twitter, index) => (
+          <div key={index} dangerouslySetInnerHTML={{ __html: twitter }} />
+        ))}
         {user && (
           <button onClick={this.searchTwitterUser}>Search Twitter User</button>
         )}
@@ -139,6 +148,44 @@ class Index extends Component {
         ) : (
           <button onClick={this.handleLogin}>Login with Twitter</button>
         )}
+        <style jsx global>
+          {`
+            blockquote.twitter-tweet {
+              display: inline-block;
+              font-family: 'Helvetica Neue', Roboto, 'Segoe UI', Calibri,
+                sans-serif;
+              font-size: 12px;
+              font-weight: bold;
+              line-height: 16px;
+              border-color: #eee #ddd #bbb;
+              border-radius: 5px;
+              border-style: solid;
+              border-width: 1px;
+              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+              margin: 10px 5px;
+              padding: 0 16px 16px 16px;
+              max-width: 468px;
+            }
+
+            blockquote.twitter-tweet p {
+              font-size: 16px;
+              font-weight: normal;
+              line-height: 20px;
+            }
+
+            blockquote.twitter-tweet a {
+              color: inherit;
+              font-weight: normal;
+              text-decoration: none;
+              outline: 0 none;
+            }
+
+            blockquote.twitter-tweet a:hover,
+            blockquote.twitter-tweet a:focus {
+              text-decoration: underline;
+            }
+          `}
+        </style>
       </App>
     )
   }
