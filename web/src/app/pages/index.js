@@ -18,7 +18,8 @@ class Index extends Component {
     super(props)
     this.state = {
       user: undefined,
-      twitterUsers: []
+      twitterUsers: [],
+      categories: []
     }
   }
 
@@ -81,10 +82,17 @@ class Index extends Component {
       })
     console.log(res.data.data)
     this.setState({ twitterUsers: res.data.data })
+
+    const categoryRes = await axios
+      .get(`${configs.api}/category`)
+      .catch(function(error) {
+        console.log(error)
+      })
+    this.setState({ categories: categoryRes.data.data })
   }
 
   render() {
-    const { user, twitterUsers } = this.state
+    const { user, twitterUsers, categories } = this.state
     return (
       <App>
         <h1>{user ? `Login: ${user.displayName}` : 'Not Login'}</h1>
@@ -98,6 +106,11 @@ class Index extends Component {
                 <a>{twitterUser.screen_name}</a>
               </Link>
             </li>
+          ))}
+        </ul>
+        <ul>
+          {categories.map((category, index) => (
+            <li key={index}>{category.name}</li>
           ))}
         </ul>
         {user && (

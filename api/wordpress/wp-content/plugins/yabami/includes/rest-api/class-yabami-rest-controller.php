@@ -14,12 +14,20 @@ abstract class Yabami_Rest_Controller {
 	protected $namespace = 'yabami/v1';
 	protected $rest_base;
 
-	static function ok($data = 'ok') {
+	static function ok( $data = 'ok' ) {
 		$response = new WP_REST_Response();
 		$response->set_status( 200 );
 		$response->set_data( array(
 			'data' => $data
 		) );
+
 		return $response;
+	}
+
+	function get_sign_in_user_token( $params ) {
+		$uid              = json_decode( Yabami_Helper_JWT::decode( $params['jwt'] )->sub )->uid;
+		$user_token_model = new Yabami_Model_User_Token();
+
+		return $user_token_model->get_by_uid( $uid );
 	}
 }

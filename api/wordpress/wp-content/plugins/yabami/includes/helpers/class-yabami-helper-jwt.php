@@ -14,6 +14,7 @@ use Firebase\JWT\JWT;
  */
 class Yabami_Helper_JWT {
 	public static function encode( $params ) {
+		// TODO: expiration_date
 		return JWT::encode( array( 'sub' => json_encode( $params ) ), JWT_AUTH_SECRET_KEY );
 	}
 

@@ -49,11 +49,7 @@ class Yabami_Rest_Twitter_Controller extends Yabami_Rest_Controller {
 	}
 
 	private function get_twitter_client( $params ) {
-		$uid              = json_decode( Yabami_Helper_JWT::decode( $params['jwt'] )->sub )->uid;
-		$user_token_model = new Yabami_Model_User_Token();
-		$user_token       = $user_token_model->get_by_uid( $uid );
-
-		return new Yabami_Util_Twitter( $user_token );
+		return new Yabami_Util_Twitter( self::get_sign_in_user_token( $params ) );
 	}
 
 }
