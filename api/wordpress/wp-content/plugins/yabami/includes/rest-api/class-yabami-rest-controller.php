@@ -30,4 +30,5 @@ abstract class Yabami_Rest_Controller {
 
 		return $user_token_model->get_by_uid( $uid );
 	}
+
 }

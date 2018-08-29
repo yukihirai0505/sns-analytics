@@ -19,7 +19,8 @@ class Index extends Component {
     this.state = {
       user: undefined,
       twitterUsers: [],
-      categories: []
+      categories: [],
+      tweets: []
     }
   }
 
@@ -74,7 +75,7 @@ class Index extends Component {
   searchTwitterUser = async () => {
     const res = await axios
       .post(`${configs.api}/twitter/search_user`, {
-        q: 'iHayato',
+        q: 'takapon_jp',
         jwt: Cookies.get('yabami_auth')
       })
       .catch(function(error) {
@@ -89,10 +90,20 @@ class Index extends Component {
         console.log(error)
       })
     this.setState({ categories: categoryRes.data.data })
+
+    const tweetRes = await axios
+      .post(`${configs.api}/twitter/beneficial`, {
+        jwt: Cookies.get('yabami_auth')
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
+    console.log(tweetRes.data.data)
+    this.setState({ tweets: tweetRes.data.data })
   }
 
   render() {
-    const { user, twitterUsers, categories } = this.state
+    const { user, twitterUsers, categories, tweets } = this.state
     return (
       <App>
         <h1>{user ? `Login: ${user.displayName}` : 'Not Login'}</h1>
@@ -100,7 +111,7 @@ class Index extends Component {
           {twitterUsers.map(twitterUser => (
             <li key={twitterUser.id}>
               <Link
-                as={`/p/${twitterUser.name}`}
+                as={`/p/${twitterUser.id}`}
                 href={`/post?id=${twitterUser.name}`}
               >
                 <a>{twitterUser.screen_name}</a>
@@ -111,6 +122,11 @@ class Index extends Component {
         <ul>
           {categories.map((category, index) => (
             <li key={index}>{category.name}</li>
+          ))}
+        </ul>
+        <ul>
+          {tweets.map((twitter, index) => (
+            <li key={index}>{twitter.text}</li>
           ))}
         </ul>
         {user && (

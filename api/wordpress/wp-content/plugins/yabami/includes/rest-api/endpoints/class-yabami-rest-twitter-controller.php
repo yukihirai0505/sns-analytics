@@ -31,25 +31,49 @@ class Yabami_Rest_Twitter_Controller extends Yabami_Rest_Controller {
 			)
 		) );
 
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/beneficial', array(
+			array(
+				'methods'  => WP_REST_Server::CREATABLE,
+				'callback' => array( $this, 'beneficial_tweets' )
+			)
+		) );
 	}
 
 	public function search_user( WP_REST_Request $data ) {
-		$params  = $data->get_params();
-		$query   = urldecode( $params['q'] );
-		$twitter = $this->get_twitter_client( $params );
+		$params     = $data->get_params();
+		$query      = urldecode( $params['q'] );
+		$user_token = self::get_sign_in_user_token( $params );
+		$twitter    = $this->get_twitter_client( $user_token );
 
 		return self::ok( $twitter->search_user( $query ) );
 	}
 
 	public function timeline( WP_REST_Request $data ) {
-		$params  = $data->get_params();
-		$twitter = $this->get_twitter_client( $params );
+		$params     = $data->get_params();
+		$user_token = self::get_sign_in_user_token( $params );
+		$twitter    = $this->get_twitter_client( $user_token );
 
 		return self::ok( $twitter->get_timeline() );
 	}
 
-	private function get_twitter_client( $params ) {
-		return new Yabami_Util_Twitter( self::get_sign_in_user_token( $params ) );
+	public function beneficial_tweets( WP_REST_Request $data ) {
+		$params            = $data->get_params();
+		$user_token        = self::get_sign_in_user_token( $params );
+		$twitter           = $this->get_twitter_client( $user_token );
+		$user_subscription = new Yabami_Model_User_Subscription();
+		$tweets            = [];
+		foreach ( $user_subscription->get_by_uid( $user_token->uid ) as $user_subscription ) {
+			$tweets = array_merge(
+				$tweets,
+				$twitter->search_tweets( $user_subscription->twitter_account_id )->statuses
+			);
+		}
+
+		return self::ok( $tweets );
+	}
+
+	private function get_twitter_client( $user_token ) {
+		return new Yabami_Util_Twitter( $user_token );
 	}
 
 }

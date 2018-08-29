@@ -139,6 +139,7 @@ class Yabami {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model-user-token.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model-category.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model-user-subscription.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/class-yabami-rest-controller.php';
 
