@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import App from '../components/App'
 import Link from 'next/link'
-import { auth, providerTwitter } from '../config'
+import { auth, providerTwitter, configs } from '../config'
 import axios from 'axios'
 
 class Index extends Component {
@@ -40,8 +40,7 @@ class Index extends Component {
     if (user) {
       this.setState({ user })
       const res = await axios
-        //.post('https://yabaiwebyasan.com/wp-json/yabami/v1/user_token', {
-        .post('http://localhost:8888/wp-json/yabami/v1/user_token', {
+        .post(`${configs.api}/user_token`, {
           uid: user.uid,
           twitterAccessToken: result.credential.accessToken,
           twitterAccessTokenSecret: result.credential.secret
