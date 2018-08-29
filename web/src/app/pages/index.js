@@ -3,11 +3,14 @@ import App from '../components/App'
 import Link from 'next/link'
 import { auth, providerTwitter, configs } from '../config'
 import axios from 'axios'
+import cookies from 'next-cookies'
+import Cookies from 'js-cookie'
 
 class Index extends Component {
-  static async getInitialProps({}) {
+  static async getInitialProps(ctx) {
     // NOTICE: It is not possible to call non-google APIs using the free Spark plan as explained on the Firebase pricing page:
     // ref: https://stackoverflow.com/questions/43415759/use-firebase-cloud-function-to-send-post-request-to-non-google-server
+    const { yabami_auth } = cookies(ctx)
     return {}
   }
 
@@ -47,6 +50,7 @@ class Index extends Component {
           console.log(error)
         })
       console.log(res)
+      Cookies.set('yabami_auth', res.data.data.jwt)
       this.setState({ user })
     }
   }
@@ -68,8 +72,9 @@ class Index extends Component {
 
   searchTwitterUser = async () => {
     const res = await axios
-      .get(`${configs.api}/twitter/search_user?q=iHayato`, {
-        withCredentials: true
+      .post(`${configs.api}/twitter/search_user`, {
+        q: 'iHayato',
+        jwt: Cookies.get('yabami_auth')
       })
       .catch(function(error) {
         console.log(error)

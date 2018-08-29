@@ -30,6 +30,7 @@ services:
       REDIS_PORT: "6379"
       TWITTER_CONSUMER_KEY: "${TWITTER_CONSUMER_KEY}"
       TWITTER_CONSUMER_SECRET: "${TWITTER_CONSUMER_SECRET}"
+      JWT_AUTH_SECRET_KEY: "${JWT_AUTH_SECRET_KEY}"
     links:
       - db
       - redis

@@ -134,9 +134,7 @@ class Yabami {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/lib/vendor/autoload.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/utils/class-yabami-util-twitter.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/constants/class-yabami-constant-session.php';
-
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/helpers/class-yabami-helper-session.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/helpers/class-yabami-helper-jwt.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model-user-token.php';
