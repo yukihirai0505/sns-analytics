@@ -38,7 +38,6 @@ class Index extends Component {
     console.log('redirect result', result)
     const user = result.user
     if (user) {
-      this.setState({ user })
       const res = await axios
         .post(`${configs.api}/user_token`, {
           uid: user.uid,
@@ -49,6 +48,7 @@ class Index extends Component {
           console.log(error)
         })
       console.log(res)
+      this.setState({ user })
     }
   }
 

@@ -16,25 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `user_token`
+-- Table structure for table `subscription_user_category`
 --
 
-DROP TABLE IF EXISTS `user_token`;
+DROP TABLE IF EXISTS `subscription_user_category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_token` (
-  `uid` varchar(100) NOT NULL COMMENT 'Unique ID',
-  `twitter_access_token` varchar(500) NOT NULL COMMENT 'Twitter AccessToken',
-  `twitter_access_token_secret` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`uid`),
-  UNIQUE KEY `uid_UNIQUE` (`uid`)
-) ENGINE=InnoDB COMMENT='User Tokens';
+CREATE TABLE `subscription_user_category` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `category_id` bigint(20) NOT NULL,
+  `twitter_account_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user_token`
+-- Dumping data for table `subscription_user_category`
 --
 
+LOCK TABLES `subscription_user_category` WRITE;
+/*!40000 ALTER TABLE `subscription_user_category` DISABLE KEYS */;
+/*!40000 ALTER TABLE `subscription_user_category` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -45,4 +48,4 @@ CREATE TABLE `user_token` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-08-29 12:41:13
+-- Dump completed on 2018-08-29 12:41:11

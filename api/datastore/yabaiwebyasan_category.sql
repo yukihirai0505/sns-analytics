@@ -16,25 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `user_token`
+-- Table structure for table `category`
 --
 
-DROP TABLE IF EXISTS `user_token`;
+DROP TABLE IF EXISTS `category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_token` (
-  `uid` varchar(100) NOT NULL COMMENT 'Unique ID',
-  `twitter_access_token` varchar(500) NOT NULL COMMENT 'Twitter AccessToken',
-  `twitter_access_token_secret` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`uid`),
-  UNIQUE KEY `uid_UNIQUE` (`uid`)
-) ENGINE=InnoDB COMMENT='User Tokens';
+CREATE TABLE `category` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user_token`
+-- Dumping data for table `category`
 --
 
+LOCK TABLES `category` WRITE;
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` VALUES (1,'business'),(2,'cryptocurrency'),(3,'blog');
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
