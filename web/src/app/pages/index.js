@@ -8,21 +8,14 @@ class Index extends Component {
   static async getInitialProps({}) {
     // NOTICE: It is not possible to call non-google APIs using the free Spark plan as explained on the Firebase pricing page:
     // ref: https://stackoverflow.com/questions/43415759/use-firebase-cloud-function-to-send-post-request-to-non-google-server
-    const show = {
-      show: {
-        id: 1,
-        name: 'hoge'
-      }
-    }
-    const shows = [show]
-    return { shows }
+    return {}
   }
 
   constructor(props) {
     super(props)
     this.state = {
       user: undefined,
-      show: []
+      twitterUsers: []
     }
   }
 
@@ -39,11 +32,17 @@ class Index extends Component {
     const user = result.user
     if (user) {
       const res = await axios
-        .post(`${configs.api}/user_token`, {
-          uid: user.uid,
-          twitterAccessToken: result.credential.accessToken,
-          twitterAccessTokenSecret: result.credential.secret
-        })
+        .post(
+          `${configs.api}/user_token`,
+          {
+            uid: user.uid,
+            twitterAccessToken: result.credential.accessToken,
+            twitterAccessTokenSecret: result.credential.secret
+          },
+          {
+            withCredentials: true
+          }
+        )
         .catch(function(error) {
           console.log(error)
         })
@@ -67,22 +66,42 @@ class Index extends Component {
       })
   }
 
+  searchTwitterUser = async () => {
+    const res = await axios
+      .get(`${configs.api}/twitter/search_user?q=iHayato`, {
+        withCredentials: true
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
+    console.log(res.data.data)
+    this.setState({ twitterUsers: res.data.data })
+  }
+
   render() {
-    const { user } = this.state
+    const { user, twitterUsers } = this.state
     return (
       <App>
         <h1>{user ? `Login: ${user.displayName}` : 'Not Login'}</h1>
         <ul>
-          {this.props.shows.map(({ show }) => (
-            <li key={show.id}>
-              <Link as={`/p/${show.id}`} href={`/post?id=${show.id}`}>
-                <a>{show.name}</a>
+          {twitterUsers.map(twitterUser => (
+            <li key={twitterUser.id}>
+              <Link
+                as={`/p/${twitterUser.name}`}
+                href={`/post?id=${twitterUser.name}`}
+              >
+                <a>{twitterUser.screen_name}</a>
               </Link>
             </li>
           ))}
         </ul>
+        {user && (
+          <button onClick={this.searchTwitterUser}>Search Twitter User</button>
+        )}
         {user ? (
-          <button onClick={this.handleSignOut}>Sign Out</button>
+          <div>
+            <button onClick={this.handleSignOut}>Sign Out</button>
+          </div>
         ) : (
           <button onClick={this.handleLogin}>Login with Twitter</button>
         )}

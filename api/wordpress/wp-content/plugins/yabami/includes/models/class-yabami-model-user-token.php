@@ -43,6 +43,6 @@ class Yabami_Model_User_Token extends Yabami_Model {
 			) );
 		}
 
-		return false;
+		return true;
 	}
 }

@@ -34,21 +34,26 @@ class Yabami_Rest_Twitter_Controller extends Yabami_Rest_Controller {
 	}
 
 	public function search_user( WP_REST_Request $data ) {
-		$params = $data->get_params();
-		$query  = urldecode( $params['q'] );
-
-		$user_token_model = new Yabami_Model_User_Token();
-		$user_token       = $user_token_model->get_all()[0];
-		$twitter          = new Yabami_Util_Twitter( $user_token );
+		$params  = $data->get_params();
+		$query   = urldecode( $params['q'] );
+		$twitter = $this->get_twitter_client();
 
 		return self::ok( $twitter->search_user( $query ) );
 	}
 
 	public function timeline() {
-		$user_token_model = new Yabami_Model_User_Token();
-		$user_token       = $user_token_model->get_all()[0];
-		$twitter          = new Yabami_Util_Twitter( $user_token );
+		$twitter = $this->get_twitter_client();
 
 		return self::ok( $twitter->get_timeline() );
 	}
+
+	private function get_twitter_client() {
+		$session          = new Yabami_Helper_Session( Yabami_Constant_Session::U_ID );
+		$uid              = $session->get();
+		$user_token_model = new Yabami_Model_User_Token();
+		$user_token       = $user_token_model->get_by_uid( $uid );
+
+		return new Yabami_Util_Twitter( $user_token );
+	}
+
 }
