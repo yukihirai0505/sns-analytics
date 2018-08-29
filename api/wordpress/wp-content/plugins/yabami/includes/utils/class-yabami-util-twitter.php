@@ -19,14 +19,14 @@ class Yabami_Util_Twitter {
 		return $this->twitter->get( "account/verify_credentials" );
 	}
 
-	function get_user($twitter_user_id) {
+	function get_user($twitter_account_id) {
 		return $this->twitter->get('users/show', [
-			'user_id' => $twitter_user_id
+			'user_id' => $twitter_account_id
 		]);
 	}
 
-	function search_tweets($twitter_user_id) {
-		$screen_name = strtolower($this->get_user($twitter_user_id)->screen_name);
+	function search_tweets($twitter_account_id) {
+		$screen_name = strtolower($this->get_user($twitter_account_id)->screen_name);
 		$date = date("Y-m-d",strtotime("-1 week"));
 		return $this->twitter->get('search/tweets', [
 			//  OR min_faves:50
@@ -35,9 +35,9 @@ class Yabami_Util_Twitter {
 		]);
 	}
 
-	function get_user_timeline($twitter_user_id) {
+	function get_user_timeline($twitter_account_id) {
 		return $this->twitter->get('statuses/user_timeline', [
-			'user_id' => $twitter_user_id,
+			'user_id' => $twitter_account_id,
 			'count' => 200
 		]);
 	}
