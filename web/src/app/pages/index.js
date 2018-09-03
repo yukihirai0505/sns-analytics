@@ -44,15 +44,15 @@ class Index extends Component {
       console.log(res)
       Cookies.set('yabami_auth', res.data.jwt)
       this.setState({ user })
-    }
 
-    const tweets = await getBeneficialTweets()
-    if (tweets && tweets.data) {
-      this.setState({
-        tweets: tweets.data.sort((a, b) => {
-          return moment(a.created_at).diff(moment(b.created_at))
+      const tweets = await getBeneficialTweets()
+      if (tweets && tweets.data) {
+        this.setState({
+          tweets: tweets.data.sort((a, b) => {
+            return moment(a.created_at).diff(moment(b.created_at))
+          })
         })
-      })
+      }
     }
   }
 
