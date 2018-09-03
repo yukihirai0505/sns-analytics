@@ -19,7 +19,6 @@ class Index extends Component {
     this.state = {
       user: undefined,
       twitterUsers: [],
-      categories: [],
       tweets: []
     }
   }
@@ -84,13 +83,6 @@ class Index extends Component {
     console.log(res.data.data)
     this.setState({ twitterUsers: res.data.data })
 
-    const categoryRes = await axios
-      .get(`${configs.api}/category`)
-      .catch(function(error) {
-        console.log(error)
-      })
-    this.setState({ categories: categoryRes.data.data })
-
     const tweetRes = await axios
       .post(`${configs.api}/twitter/beneficial`, {
         jwt: Cookies.get('yabami_auth')
@@ -114,7 +106,7 @@ class Index extends Component {
   }
 
   render() {
-    const { user, twitterUsers, categories, tweets } = this.state
+    const { user, twitterUsers, tweets } = this.state
     return (
       <App>
         <h1>{user ? `Login: ${user.displayName}` : 'Not Login'}</h1>
@@ -130,13 +122,8 @@ class Index extends Component {
             </li>
           ))}
         </ul>
-        <ul>
-          {categories.map((category, index) => (
-            <li key={index}>{category.name}</li>
-          ))}
-        </ul>
         {tweets.map((twitter, index) => (
-          <div key={index} dangerouslySetInnerHTML={{ __html: twitter }} />
+          <div key={index} dangerouslySetInnerHTML={{ __html: twitter }}/>
         ))}
         {user && (
           <button onClick={this.searchTwitterUser}>Search Twitter User</button>

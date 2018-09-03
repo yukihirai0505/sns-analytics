@@ -32,7 +32,8 @@
     "next": "^6.0.3",
     "next-cookies": "^1.0.2",
     "react": "^16.4.0",
-    "react-dom": "^16.4.0"
+    "react-dom": "^16.4.0",
+    "styled-jsx": "^3.0.2"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.3.2",

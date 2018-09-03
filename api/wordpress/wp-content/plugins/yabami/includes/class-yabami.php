@@ -104,10 +104,6 @@ class Yabami {
 			$user_token->register_endpoints();
 			$twitter = new Yabami_Rest_Twitter_Controller();
 			$twitter->register_endpoints();
-			$category = new Yabami_Rest_Category_Controller();
-			$category->register_endpoints();
-			$subscription_user_category = new Yabami_Rest_Subscription_User_Category_Controller();
-			$subscription_user_category->register_endpoints();
 			$user_subscription = new Yabami_Rest_User_Subscription_Controller();
 			$user_subscription->register_endpoints();
 		} );
@@ -138,15 +134,12 @@ class Yabami {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model-user-token.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model-category.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/models/class-yabami-model-user-subscription.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/class-yabami-rest-controller.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/endpoints/class-yabami-rest-user-token-controller.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/endpoints/class-yabami-rest-twitter-controller.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/endpoints/class-yabami-rest-subscription-user-category-controller.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/endpoints/class-yabami-rest-category-controller.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/rest-api/endpoints/class-yabami-rest-user-subscription-controller.php';
 
 		/**
