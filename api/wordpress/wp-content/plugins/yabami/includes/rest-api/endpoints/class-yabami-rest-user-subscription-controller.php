@@ -26,6 +26,11 @@ class Yabami_Rest_User_Subscription_Controller extends Yabami_Rest_Controller {
 	}
 
 	public function create( WP_REST_Request $data ) {
-		return self::ok();
+		$params             = $data->get_params();
+		$uid                = $this->get_sign_in_user_token( $params )->uid;
+		$twitter_account_id = $params['twitter_account_id'];
+		$model              = new Yabami_Model_User_Subscription();
+
+		return self::ok( $model->save( $uid, $twitter_account_id ) );
 	}
 }

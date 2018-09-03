@@ -26,4 +26,12 @@ class Yabami_Model_User_Subscription extends Yabami_Model {
 		return $wpdb->get_results( "SELECT * FROM user_subscription WHERE uid = \"${uid}\"" );
 	}
 
+	function save( $uid, $twitter_account_id ) {
+		global $wpdb;
+
+		return $wpdb->insert( $this->table_name, array(
+			'uid'                => $uid,
+			'twitter_account_id' => $twitter_account_id
+		) );
+	}
 }
