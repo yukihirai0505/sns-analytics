@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import App from '../components/App'
+import Page from '../layouts/main'
 import Link from 'next/link'
 import { auth, providerTwitter, configs } from '../config'
 import cookies from 'next-cookies'
 import Cookies from 'js-cookie'
 import {
+  addSubscription,
   embed,
   getBeneficialTweets,
   saveUserToken,
@@ -36,14 +37,17 @@ class Index extends Component {
     const result = await auth.getRedirectResult().catch(error => {
       console.log('redirect result', error)
     })
-
-    console.log('redirect result', result)
     const user = result.user
     if (user) {
       const res = await saveUserToken(result)
       console.log(res)
       Cookies.set('yabami_auth', res.data.jwt)
       this.setState({ user })
+    }
+
+    const tweets = await getBeneficialTweets()
+    if (tweets && tweets.data) {
+      this.setState({ tweets: tweets.data })
     }
   }
 
@@ -63,47 +67,101 @@ class Index extends Component {
   }
 
   searchTwitterUser = async () => {
-    const users = await searchUser('takapon_jp')
+    let searchUserName = document.getElementById('search-user-name')
+    console.log(searchUserName.value)
+    const users = await searchUser(searchUserName.value)
     if (users) {
       this.setState({ twitterUsers: users.data })
     }
-    const tweets = await getBeneficialTweets()
-    if (tweets) {
-      let newTweets = []
-      tweets.data.forEach(async twitter => {
-        const url = `https://twitter.com/${twitter.user.screen_name}/statuses/${
-          twitter.id_str
-        }`
-        const embed = await embed(url)
-        newTweets.push(embed.data)
-        this.setState({ tweets: newTweets })
-      })
-    }
+  }
+
+  addSubscription = async twitterAccountId => {
+    const res = await addSubscription(twitterAccountId)
+    console.log(res)
   }
 
   render() {
     const { user, twitterUsers, tweets } = this.state
     return (
-      <App>
+      <Page>
         <h1>{user ? `Login: ${user.displayName}` : 'Not Login'}</h1>
+        {user && (
+          <div>
+            <input type="text" id="search-user-name" />
+            <button onClick={this.searchTwitterUser}>
+              Search Twitter User
+            </button>
+          </div>
+        )}
         <ul>
           {twitterUsers.map(twitterUser => (
-            <li key={twitterUser.id}>
+            <li key={twitterUser.id_str}>
               <Link
-                as={`/p/${twitterUser.id}`}
+                as={`/p/${twitterUser.id_str}`}
                 href={`/post?id=${twitterUser.name}`}
               >
                 <a>{twitterUser.screen_name}</a>
               </Link>
+              <button onClick={() => this.addSubscription(twitterUser.id_str)}>
+                Add
+              </button>
             </li>
           ))}
         </ul>
-        {tweets.map((twitter, index) => (
-          <div key={index} dangerouslySetInnerHTML={{ __html: twitter }} />
-        ))}
-        {user && (
-          <button onClick={this.searchTwitterUser}>Search Twitter User</button>
-        )}
+        {tweets.map((twitter, index) => {
+          const twitterLink = `https://twitter.com/${
+            twitter.user.screen_name
+          }/statuses/${twitter.id_str}`
+          return (
+            <blockquote className="twitter-tweet" key={index}>
+              <p className="ja" dir="ltr">
+                {twitter.text}{' '}
+                <span dangerouslySetInnerHTML={{ __html: twitter.source }} />
+              </p>
+              — {twitter.user.name} (@
+              {twitter.user.screen_name}){' '}
+              <a href={twitterLink}>{twitter.created_at}</a>
+              <style jsx>
+                {`
+                  blockquote.twitter-tweet {
+                    display: inline-block;
+                    font-family: 'Helvetica Neue', Roboto, 'Segoe UI', Calibri,
+                      sans-serif;
+                    font-size: 12px;
+                    font-weight: bold;
+                    line-height: 16px;
+                    border-color: #eee #ddd #bbb;
+                    border-radius: 5px;
+                    border-style: solid;
+                    border-width: 1px;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+                    margin: 10px 5px;
+                    padding: 0 16px 16px 16px;
+                    max-width: 468px;
+                  }
+
+                  blockquote.twitter-tweet p {
+                    font-size: 16px;
+                    font-weight: normal;
+                    line-height: 20px;
+                  }
+
+                  blockquote.twitter-tweet a {
+                    color: inherit;
+                    font-weight: normal;
+                    text-decoration: none;
+                    outline: 0 none;
+                  }
+
+                  blockquote.twitter-tweet a:hover,
+                  blockquote.twitter-tweet a:focus {
+                    text-decoration: underline;
+                  }
+                `}
+              </style>
+            </blockquote>
+          )
+        })}
         {user ? (
           <div>
             <button onClick={this.handleSignOut}>Sign Out</button>
@@ -111,45 +169,7 @@ class Index extends Component {
         ) : (
           <button onClick={this.handleLogin}>Login with Twitter</button>
         )}
-        <style jsx global>
-          {`
-            blockquote.twitter-tweet {
-              display: inline-block;
-              font-family: 'Helvetica Neue', Roboto, 'Segoe UI', Calibri,
-                sans-serif;
-              font-size: 12px;
-              font-weight: bold;
-              line-height: 16px;
-              border-color: #eee #ddd #bbb;
-              border-radius: 5px;
-              border-style: solid;
-              border-width: 1px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-              margin: 10px 5px;
-              padding: 0 16px 16px 16px;
-              max-width: 468px;
-            }
-
-            blockquote.twitter-tweet p {
-              font-size: 16px;
-              font-weight: normal;
-              line-height: 20px;
-            }
-
-            blockquote.twitter-tweet a {
-              color: inherit;
-              font-weight: normal;
-              text-decoration: none;
-              outline: 0 none;
-            }
-
-            blockquote.twitter-tweet a:hover,
-            blockquote.twitter-tweet a:focus {
-              text-decoration: underline;
-            }
-          `}
-        </style>
-      </App>
+      </Page>
     )
   }
 }

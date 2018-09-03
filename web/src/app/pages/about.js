@@ -1,8 +1,8 @@
 import React from 'react'
-import App from '../components/App'
+import Page from '../layouts/main'
 
 export default () => (
-  <App>
+  <Page>
     <p>About Page</p>
-  </App>
+  </Page>
 )

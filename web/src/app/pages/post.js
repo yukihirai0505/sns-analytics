@@ -1,12 +1,12 @@
-import App from '../components/App'
+import Page from '../layouts/main'
 
 const Post = props => (
-  <App>
+  <Page>
     <h1>Hi</h1>
     <h1>{props.show.name}</h1>
     <p>{props.show.summary.replace(/<[/]?p>/g, '')}</p>
     <img src={props.show.image.medium} />
-  </App>
+  </Page>
 )
 
 Post.getInitialProps = async function(context) {
