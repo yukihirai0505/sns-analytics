@@ -1,11 +1,11 @@
 import React from 'react'
 
-export default ({twitter, index}) => {
+export default ({twitter}) => {
   const twitterLink = `https://twitter.com/${
     twitter.user.screen_name
   }/statuses/${twitter.id_str}`
   return (
-    <blockquote className="twitter-tweet" key={index}>
+    <blockquote className="twitter-tweet">
       <p className="ja" dir="ltr">
         {twitter.text}{' '}
         <span dangerouslySetInnerHTML={{ __html: twitter.source }} />

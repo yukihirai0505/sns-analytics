@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
+import moment from 'moment'
 import Page from '../layouts/main'
 import TwitterEmbed from '../components/twitterEmbed'
 import Link from 'next/link'
-import { auth, providerTwitter, configs } from '../config'
+import { auth, providerTwitter } from '../config'
 import cookies from 'next-cookies'
 import Cookies from 'js-cookie'
 import {
   addSubscription,
-  embed,
   getBeneficialTweets,
   saveUserToken,
   searchUser
@@ -48,7 +48,11 @@ class Index extends Component {
 
     const tweets = await getBeneficialTweets()
     if (tweets && tweets.data) {
-      this.setState({ tweets: tweets.data })
+      this.setState({
+        tweets: tweets.data.sort((a, b) => {
+          return moment(a.created_at).diff(moment(b.created_at))
+        })
+      })
     }
   }
 
@@ -95,8 +99,8 @@ class Index extends Component {
           </div>
         )}
         <ul>
-          {twitterUsers.map(twitterUser => (
-            <li key={twitterUser.id_str}>
+          {twitterUsers.map((twitterUser, index) => (
+            <li key={index}>
               <Link
                 as={`/p/${twitterUser.id_str}`}
                 href={`/post?id=${twitterUser.name}`}
@@ -110,7 +114,7 @@ class Index extends Component {
           ))}
         </ul>
         {tweets.map((twitter, index) => {
-          return <TwitterEmbed twitter={twitter} index={index} />
+          return <TwitterEmbed twitter={twitter} key={index} />
         })}
         {user ? (
           <div>
