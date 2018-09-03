@@ -2,9 +2,14 @@ import React, { Component } from 'react'
 import App from '../components/App'
 import Link from 'next/link'
 import { auth, providerTwitter, configs } from '../config'
-import axios from 'axios'
 import cookies from 'next-cookies'
 import Cookies from 'js-cookie'
+import {
+  embed,
+  getBeneficialTweets,
+  saveUserToken,
+  searchUser
+} from '../utils/api'
 
 class Index extends Component {
   static async getInitialProps(ctx) {
@@ -35,23 +40,9 @@ class Index extends Component {
     console.log('redirect result', result)
     const user = result.user
     if (user) {
-      const res = await axios
-        .post(
-          `${configs.api}/user_token`,
-          {
-            uid: user.uid,
-            twitterAccessToken: result.credential.accessToken,
-            twitterAccessTokenSecret: result.credential.secret
-          },
-          {
-            withCredentials: true
-          }
-        )
-        .catch(function(error) {
-          console.log(error)
-        })
+      const res = await saveUserToken(result)
       console.log(res)
-      Cookies.set('yabami_auth', res.data.data.jwt)
+      Cookies.set('yabami_auth', res.data.jwt)
       this.setState({ user })
     }
   }
@@ -72,37 +63,22 @@ class Index extends Component {
   }
 
   searchTwitterUser = async () => {
-    const res = await axios
-      .post(`${configs.api}/twitter/search_user`, {
-        q: 'takapon_jp',
-        jwt: Cookies.get('yabami_auth')
+    const users = await searchUser('takapon_jp')
+    if (users) {
+      this.setState({ twitterUsers: users.data })
+    }
+    const tweets = await getBeneficialTweets()
+    if (tweets) {
+      let newTweets = []
+      tweets.data.forEach(async twitter => {
+        const url = `https://twitter.com/${twitter.user.screen_name}/statuses/${
+          twitter.id_str
+        }`
+        const embed = await embed(url)
+        newTweets.push(embed.data)
+        this.setState({ tweets: newTweets })
       })
-      .catch(function(error) {
-        console.log(error)
-      })
-    console.log(res.data.data)
-    this.setState({ twitterUsers: res.data.data })
-
-    const tweetRes = await axios
-      .post(`${configs.api}/twitter/beneficial`, {
-        jwt: Cookies.get('yabami_auth')
-      })
-      .catch(function(error) {
-        console.log(error)
-      })
-    let newTweets = []
-    tweetRes.data.data.forEach(async twitter => {
-      const url = `https://twitter.com/${twitter.user.screen_name}/statuses/${
-        twitter.id_str
-      }`
-      const res = await axios
-        .get(`${configs.api}/twitter/embed?url=${url}`)
-        .catch(function(error) {
-          console.log(error)
-        })
-      newTweets.push(res.data.data)
-      this.setState({ tweets: newTweets })
-    })
+    }
   }
 
   render() {
@@ -123,7 +99,7 @@ class Index extends Component {
           ))}
         </ul>
         {tweets.map((twitter, index) => (
-          <div key={index} dangerouslySetInnerHTML={{ __html: twitter }}/>
+          <div key={index} dangerouslySetInnerHTML={{ __html: twitter }} />
         ))}
         {user && (
           <button onClick={this.searchTwitterUser}>Search Twitter User</button>
