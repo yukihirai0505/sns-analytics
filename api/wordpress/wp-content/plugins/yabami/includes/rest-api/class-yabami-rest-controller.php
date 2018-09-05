@@ -24,8 +24,11 @@ abstract class Yabami_Rest_Controller {
 		return $response;
 	}
 
-	function get_sign_in_user_token( $params ) {
-		$uid              = json_decode( Yabami_Helper_JWT::decode( $params['jwt'] )->sub )->uid;
+	function get_sign_in_user_token() {
+		$header           = getallheaders();
+		$jwt              = str_replace( 'Bearer ', '', $header['Authorization'] );
+		$uid              = json_decode( Yabami_Helper_JWT::decode( $jwt )->sub
+		)->uid;
 		$user_token_model = new Yabami_Model_User_Token();
 
 		return $user_token_model->get_by_uid( $uid );

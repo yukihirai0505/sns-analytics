@@ -5,77 +5,59 @@ export {
   saveUserToken,
   searchUser,
   getBeneficialTweets,
-  embed,
   getSubscriptions,
   addSubscription
 }
 
-async function saveUserToken(result) {
-  let res = await client
-    .post(
-      '/user_token',
-      {
-        uid: result.user.uid,
-        twitterAccessToken: result.credential.accessToken,
-        twitterAccessTokenSecret: result.credential.secret
-      },
-      {
-        withCredentials: true
-      }
-    )
-    .catch(error => {
-      console.log(error)
-    })
-  return res.data
+const saveUserToken = async result => {
+  return post(
+    '/user_token',
+    {
+      uid: result.user.uid,
+      twitterAccessToken: result.credential.accessToken,
+      twitterAccessTokenSecret: result.credential.secret
+    },
+    false
+  )
 }
 
-async function searchUser(name) {
-  let res = await client
-    .post('/twitter/search_user', {
-      q: name,
-      jwt: Cookies.get('yabami_auth')
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  return res.data
+const searchUser = async name => {
+  return get(`/twitter/search_user?q=${name}`)
 }
 
-async function getBeneficialTweets() {
-  let res = await client
-    .post('/twitter/beneficial', {
-      jwt: Cookies.get('yabami_auth')
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  return res.data
+const getBeneficialTweets = () => {
+  return get('/twitter/beneficial')
 }
 
-async function embed(url) {
-  let res = await client.get(`/twitter/embed?url=${url}`).catch(error => {
-    console.log(error)
+const getSubscriptions = () => {
+  return get(`/user_subscription`)
+}
+
+const addSubscription = twitterAccountId => {
+  return post(`/user_subscription/save`, {
+    twitterAccountId: twitterAccountId
   })
-  return res.data
 }
 
-async function getSubscriptions() {
-  let res = await client
-    .post(`/user_subscription`, {
-      jwt: Cookies.get('yabami_auth')
-    })
-    .catch(error => {
-      console.log(error)
-    })
-  return res.data
+const get = async (url, withAuthHeader = true) => {
+  return request((headers) => client
+    .get(url, {
+      headers: headers
+    }), withAuthHeader)
 }
 
-async function addSubscription(twitterAccountId) {
-  let res = await client
-    .post(`/user_subscription/save`, {
-      twitterAccountId: twitterAccountId,
-      jwt: Cookies.get('yabami_auth')
-    })
+const post = (url, data = {}, withAuthHeader = true) => {
+  return request((headers) => client
+    .post(url, data, {
+      headers: headers
+    }), withAuthHeader)
+}
+
+const request = async (req, withAuthHeader = true) => {
+  let headers = withAuthHeader
+    ? { Authorization: 'Bearer ' + Cookies.get('yabami_auth') }
+    : {}
+  let res = await req(headers)
     .catch(error => {
       console.log(error)
     })
