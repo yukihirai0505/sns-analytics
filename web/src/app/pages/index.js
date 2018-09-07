@@ -1,17 +1,13 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 import Page from '../layouts/main'
-import TwitterEmbed from '../components/twitterEmbed'
+import TwitterEmbed from '../components/TwitterEmbed'
 import Link from 'next/link'
 import { auth, providerTwitter } from '../config'
 import cookies from 'next-cookies'
 import Cookies from 'js-cookie'
-import {
-  addSubscription,
-  getBeneficialTweets,
-  saveUserToken,
-  searchUser
-} from '../utils/api'
+import { addSubscription, getBeneficialTweets, searchUser } from '../utils/api'
+import { checkSignIn } from '../utils/auth'
 
 class Index extends Component {
   static async getInitialProps(ctx) {
@@ -31,20 +27,9 @@ class Index extends Component {
   }
 
   async componentDidMount() {
-    auth.onAuthStateChanged(user => {
-      this.setState({ user })
-    })
-
-    const result = await auth.getRedirectResult().catch(error => {
-      console.log('redirect result', error)
-    })
-    const user = result.user
+    await checkSignIn(this)
+    const { user } = this.state
     if (user) {
-      const res = await saveUserToken(result)
-      console.log(res)
-      Cookies.set('yabami_auth', res.data.jwt)
-      this.setState({ user })
-
       const tweets = await getBeneficialTweets()
       if (tweets && tweets.data) {
         this.setState({
@@ -64,7 +49,10 @@ class Index extends Component {
     auth
       .signOut()
       .then(result => {
-        this.setState({ user: undefined })
+        Cookies.remove('yabami_auth')
+        this.setState({
+          user: undefined
+        })
       })
       .catch(error => {
         console.log(error)

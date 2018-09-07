@@ -26,6 +26,13 @@ class Yabami_Rest_User_Token_Controller extends Yabami_Rest_Controller {
 
 		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
 			array(
+				'methods'  => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'self' )
+			)
+		) );
+
+		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
+			array(
 				'methods'  => WP_REST_Server::CREATABLE,
 				'callback' => array( $this, 'create' )
 			)
@@ -34,6 +41,14 @@ class Yabami_Rest_User_Token_Controller extends Yabami_Rest_Controller {
 
 	public function healthcheck() {
 		return self::ok();
+	}
+
+	public function self() {
+		$user_token = $this->get_sign_in_user_token();
+		if ($user_token) {
+			return self::ok();
+		}
+		return self::bad();
 	}
 
 	public function create( WP_REST_Request $data ) {

@@ -1,15 +1,11 @@
 import { client } from './client'
 import Cookies from 'js-cookie'
 
-export {
-  saveUserToken,
-  searchUser,
-  getBeneficialTweets,
-  getSubscriptions,
-  addSubscription
+export const getSelf = () => {
+  return get('/user_token/self')
 }
 
-const saveUserToken = async result => {
+export const saveUserToken = async result => {
   return post(
     '/user_token',
     {
@@ -21,45 +17,50 @@ const saveUserToken = async result => {
   )
 }
 
-const searchUser = async name => {
+export const searchUser = async name => {
   return get(`/twitter/search_user?q=${name}`)
 }
 
-const getBeneficialTweets = () => {
+export const getBeneficialTweets = () => {
   return get('/twitter/beneficial')
 }
 
-const getSubscriptions = () => {
+export const getSubscriptions = () => {
   return get(`/user_subscription`)
 }
 
-const addSubscription = twitterAccountId => {
+export const addSubscription = twitterAccountId => {
   return post(`/user_subscription/save`, {
     twitterAccountId: twitterAccountId
   })
 }
 
 const get = async (url, withAuthHeader = true) => {
-  return request((headers) => client
-    .get(url, {
-      headers: headers
-    }), withAuthHeader)
+  return request(
+    headers =>
+      client.get(url, {
+        headers: headers
+      }),
+    withAuthHeader
+  )
 }
 
 const post = (url, data = {}, withAuthHeader = true) => {
-  return request((headers) => client
-    .post(url, data, {
-      headers: headers
-    }), withAuthHeader)
+  return request(
+    headers =>
+      client.post(url, data, {
+        headers: headers
+      }),
+    withAuthHeader
+  )
 }
 
 const request = async (req, withAuthHeader = true) => {
   let headers = withAuthHeader
     ? { Authorization: 'Bearer ' + Cookies.get('yabami_auth') }
     : {}
-  let res = await req(headers)
-    .catch(error => {
-      console.log(error)
-    })
+  let res = await req(headers).catch(error => {
+    console.log(error)
+  })
   return res.data
 }

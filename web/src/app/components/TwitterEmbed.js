@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default ({twitter}) => {
+export default ({ twitter }) => {
   const twitterLink = `https://twitter.com/${
     twitter.user.screen_name
   }/statuses/${twitter.id_str}`

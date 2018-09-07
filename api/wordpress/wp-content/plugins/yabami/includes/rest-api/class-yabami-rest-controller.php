@@ -24,6 +24,16 @@ abstract class Yabami_Rest_Controller {
 		return $response;
 	}
 
+	static function bad( $data = 'bad' ) {
+		$response = new WP_REST_Response();
+		$response->set_status( 400 );
+		$response->set_data( array(
+			'data' => $data
+		) );
+
+		return $response;
+	}
+
 	function get_sign_in_user_token() {
 		$header           = getallheaders();
 		$jwt              = str_replace( 'Bearer ', '', $header['Authorization'] );
