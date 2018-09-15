@@ -24,7 +24,7 @@ class Yabami_Rest_User_Token_Controller extends Yabami_Rest_Controller {
 			)
 		) );
 
-		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/self', array(
 			array(
 				'methods'  => WP_REST_Server::READABLE,
 				'callback' => array( $this, 'self' )

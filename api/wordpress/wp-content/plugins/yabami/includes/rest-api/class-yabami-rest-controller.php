@@ -35,6 +35,18 @@ abstract class Yabami_Rest_Controller {
 	}
 
 	function get_sign_in_user_token() {
+		if ( ! function_exists( 'getallheaders' ) ) {
+			function getallheaders() {
+				$headers = [];
+				foreach ( $_SERVER as $name => $value ) {
+					if ( substr( $name, 0, 5 ) == 'HTTP_' ) {
+						$headers[ str_replace( ' ', '-', ucwords( strtolower( str_replace( '_', ' ', substr( $name, 5 ) ) ) ) ) ] = $value;
+					}
+				}
+
+				return $headers;
+			}
+		}
 		$header           = getallheaders();
 		$jwt              = str_replace( 'Bearer ', '', $header['Authorization'] );
 		$uid              = json_decode( Yabami_Helper_JWT::decode( $jwt )->sub
